@@ -1,5 +1,5 @@
 <?php
-$lnames = array(
+$randomusergenerator_lnames = array(
   'Abbott',
   'Acevedo',
   'Acosta',
@@ -1001,7 +1001,7 @@ $lnames = array(
   'Zamora',
   'Zimmerman');
 
-$fnames = array(
+$randomusergenerator_fnames = array(
 'Allison',
 'Arthur',
 'Ana',

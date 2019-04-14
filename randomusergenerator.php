@@ -8,10 +8,17 @@
   Author URI: https://zilpatech.agency
 */
 
-add_action('admin_menu', 'randomusergenerator_menu');
- 
+namespace zptrandomusergenerator;
+
+add_action( '', __NAMESPACE__ . '\\randomusergenerator_activate' );
+add_action( '', __NAMESPACE__ . '\\randomusergenerator_generate' );
+add_action( '', __NAMESPACE__ . '\\randomusergenerator_random_users' );
+add_action( '', __NAMESPACE__ . '\\randomusergenerator_get_user_roles' );
+add_action( '', __NAMESPACE__ . '\\randomusergenerator_init' );
+add_action('admin_menu', __NAMESPACE__ . '\\randomusergenerator_menu');
+
 function randomusergenerator_menu(){
-        add_menu_page( 'Random User Generator', 'Random User Generator', 'manage_options', 'randomusergenerator', 'test_init' );
+        add_menu_page( 'Random User Generator', 'Random User Generator', 'manage_options', 'randomusergenerator', __NAMESPACE__ . '\\randomusergenerator_init' );
 }
 function randomusergenerator_activate() {
  
@@ -27,51 +34,52 @@ register_activation_hook( __FILE__, 'randomusergenerator_activate' );
 
 
 foreach (range('a', 'z') as $letter) {
-    $letters[]=$letter;
+    $randomusergenerator_letters[]=$letter;
 
 }
 foreach (range('A', 'Z') as $cap) {
-    $capital[]=$cap;
+    $randomusergenerator_capital[]=$cap;
 
 }
 
 foreach (range('0', '4') as $num) {
-    $numbers[]=$num;
+    $randomusergenerator_numbers[]=$num;
     
 }
 foreach (range('5', '9') as $num) {
-    $numbers2[]=$num;
+    $randomusergenerator_numbers2[]=$num;
     
 }
 
-function generate($length){
+function randomusergenerator_generate($length){
 $loop=$length*2;
-global $letters,$numbers,$capital,$numbers2;
+global $randomusergenerator_letters,$randomusergenerator_numbers,$randomusergenerator_capital,$randomusergenerator_numbers2;
+
 
                 $c=1;
                 for($i=0;count($password)<$loop;$i++){
       
                         if($c==1){
                         $rand=mt_rand(0,count($letters)-1);
-                        $password[]=$letters[$rand];
+                        $password[]=$randomusergenerator_letters[$rand];
                        // unset($letters[$rand]);
 
                         $c++;
                         }elseif($c==2){
                 $rand=mt_rand(0,4);
-                        $password[]=$numbers2[$rand];
+                        $password[]=$randomusergenerator_numbers2[$rand];
                        // unset($numbers2[$rand]);
 
                         $c++;
                        }elseif($c==3){
                         $rand=mt_rand(0,count($capital)-1);
-                        $password[]=$capital[$rand];
+                        $password[]=$randomusergenerator_capital[$rand];
                        // unset($capital[$rand]);
                         $c++;
                         }
                         elseif($c==4){
                       $rand=mt_rand(0,4);
-                        $password[]=$numbers[$rand];
+                        $password[]=$randomusergenerator_numbers[$rand];
                        // unset($number[$rand]);
 
                         $c=1;
@@ -87,25 +95,22 @@ global $letters,$numbers,$capital,$numbers2;
 
         }
 
-function random_users($num=70,$userlen=6,$pwlen=6){
+function randomusergenerator_random_users($num=70,$userlen=6,$pwlen=6){
 
 $users=array();
 for ($i=0;$i<$num;$i++){
-  $username=strtolower(generate($userlen));
-  $password=generate($pwlen);
+
+  $username=strtolower(randomusergenerator_generate($userlen));
+  $password=randomusergenerator_generate($pwlen);
   $users[$username]=$password;
 
 }
 return $users;
 }
-$num=$_POST['num'];
-$userlen=$_POST['userlen'];
-$pwlen=$_POST['pwlen'];
-
-$random_users=random_users($num,$userlen,$pwlen);
 
 
-function get_user_roles()
+
+  function randomusergenerator_get_user_roles()
     {
         if (!function_exists('get_editable_roles')) {
             require_once ABSPATH . 'wp-admin/includes/user.php';
@@ -122,13 +127,9 @@ function get_user_roles()
     }
 
 
- $user_roles=get_user_roles();
 
-function test_init(){
-
-global $user_roles;
-global $random_users;
-
+function randomusergenerator_init(){
+$user_roles=randomusergenerator_get_user_roles();
 
 ?>
 <div class="wrap">
@@ -139,22 +140,22 @@ global $random_users;
     <table class="form-table">
         <tr valign="top">
         <th scope="row">Number of Users</th>
-        <td><input type="text" name="num" value="10" /></td>
+        <td><input type="text" name="randomusergenerator_num" value="10" /></td>
         </tr>
          
         <tr valign="top">
         <th scope="row">Length of Username</th>
-        <td><input type="text" name="userlen" value="6" /></td>
+        <td><input type="text" name="randomusergenerator_userlen" value="6" /></td>
         </tr>
         
         <tr valign="top">
         <th scope="row">Length of Password</th>
-        <td><input type="text" name="pwlen" value="6" /></td>
+        <td><input type="text" name="randomusergenerator_pwlen" value="6" /></td>
         </tr>
 
  <tr valign="top">
         <th scope="row">User Role</th>
-        <td>   <select name="role">
+        <td>   <select name="randomusergenerator_role">
       <?php foreach ($user_roles as $user_roleslug => $user_role): ?>
 
       <option value="<?php echo $user_roleslug; ?>"<?php echo $user_roleslug === 'subscriber' ? ' selected' : ''; ?>><?php echo $user_role['name']; ?></option>
@@ -174,13 +175,23 @@ global $random_users;
 <?php
 
 
-if(isset($_POST['num'])){
+if(isset($_POST['randomusergenerator_num'])){
 
-$website='https://example.com';
-$role=$_POST['role'];
+$randomusergenerator_num=ctype_digit($_POST['randomusergenerator_num']) ? $_POST['randomusergenerator_num']:0;
+$randomusergenerator_userlen=ctype_digit($_POST['randomusergenerator_userlen']) ? $_POST['randomusergenerator_userlen'] : 0;
+$randomusergenerator_pwlen=ctype_digit($_POST['randomusergenerator_pwlen']) ? $_POST['randomusergenerator_pwlen'] : 0;
+$randomusergenerator_role=sanitize_text_field($_POST['randomusergenerator_role']);
+
+if($randomusergenerator_num==0 || $randomusergenerator_userlen==0 or $randomusergenerator_pwlen==0){
+  echo "<h2 style='color:red;font-weight:800;margin-top:10px;'>&#9888; Please enter valid input.</h2>";
+}else{
+$randomusergenerator_random_users=randomusergenerator_random_users($randomusergenerator_num,$randomusergenerator_userlen,$randomusergenerator_pwlen);
+
+
+
 {
 ?>
-<h1>Copy the following data as you will not see the passwords again.</h1>
+<h2>Copy the following data as you will not see the passwords again.</h2>
 <table class="widefat fixed" cellspacing="0">
     <thead>
     <tr>
@@ -197,36 +208,38 @@ $role=$_POST['role'];
 
 include("names.php");
 
-foreach ($random_users as $user=>$pass) {
+foreach ($randomusergenerator_random_users as $user=>$pass) {
 
 
 
-$k1 = array_rand($fnames);
-$k2=array_rand($lnames);
-$fname=$fnames[$k1];
-$lname=$lnames[$k2];
+$randomusergenerator_k1 = array_rand($randomusergenerator_fnames);
+$randomusergenerator_k2=array_rand($randomusergenerator_lnames);
+$randomusergenerator_fname=$randomusergenerator_fnames[$randomusergenerator_k1];
+$randomusergenerator_lname=$randomusergenerator_lnames[$randomusergenerator_k2];
+$randomusergenerator_website='https://example.com';
+$randomusergenerator_role=esc_html($randomusergenerator_role);
 
-$userdata = array(
+$randomusergenerator_userdata = array(
     'user_login'  =>  $user,
     'user_url'    =>  $website,
     'user_pass'   =>  $pass,
     'user_email'     =>  $user.'@example.com',
     'role'      =>  $role,
-    'first_name' => $fname,
-    'last_name' => $lname,
+    'first_name' => $randomusergenerator_fname,
+    'last_name' => $randomusergenerator_lname,
 );
 
- $user_id = wp_insert_user( $userdata ) ;
+ $randomusergenerator_user_id = wp_insert_user( $randomusergenerator_userdata ) ;
 
 // //On success
- if ( ! is_wp_error( $user_id ) ) {
+ if ( ! is_wp_error( $randomusergenerator_user_id ) ) {
     //echo "User created : ". $user_id;
  }else{
   echo "<span color='red'>Could not generate $ser.</span>";
  }
 
 
-   echo "<tr><td>$fname $lname</td><td>$user</td><td>$pass</td><td>$role</td><td>$user@example.com</td></tr>";
+   echo "<tr><td>$randomusergenerator_fname $randomusergenerator_lname</td><td>$user</td><td>$pass</td><td>$randomusergenerator_role</td><td>$user@example.com</td></tr>";
  
 }
 
@@ -240,11 +253,10 @@ $userdata = array(
 }
 
 
-
+}
 
 }
 }
-
 
 
 

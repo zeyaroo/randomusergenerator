@@ -1,7 +1,7 @@
 <?php
 /*
   Plugin Name: Random User Generator
-  Plugin URI: https://zilpatech.agency/randomusergenerator
+  Plugin URI: 
   Description: Generate random users
   Version: 1.0
   Author: Zeyar Oo

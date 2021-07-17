@@ -4,7 +4,7 @@ Wordpress Plugin to create random users
 === Random User Generator ===
 Contributors: Zeyar Oo
 Tags: random,users
-Donate link: https://zilpatech.agency
+Donate link:
 Requires at least: 4.0
 Tested up to: 5.1
 Stable tag: 0.3.3

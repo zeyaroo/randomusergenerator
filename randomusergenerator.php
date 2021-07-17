@@ -5,7 +5,7 @@
   Description: Generate random users
   Version: 1.0
   Author: Zeyar Oo
-  Author URI: https://zilpatech.agency
+  Author URI: 
 */
 
 namespace zptrandomusergenerator;
